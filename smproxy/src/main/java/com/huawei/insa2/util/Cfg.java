@@ -97,7 +97,7 @@ public class Cfg {
 	 *            父节点的路径。
 	 */
 	public Args getArgs(String key) {
-		Map args = new HashMap();
+		Map<String, Object> args = new HashMap<String, Object>();
 		String[] children = childrenNames(key);
 		for (int i = 0; i < children.length; i++) {
 			args.put(children[i], get(key + '/' + children[i], null));
@@ -682,7 +682,7 @@ public class Cfg {
 			return new String[0];
 		}
 		NodeList nl = node.getChildNodes();
-		LinkedList list = new LinkedList();
+		List<String> list = new LinkedList<String>();
 		for (int i = 0; i < nl.getLength(); i++) {
 			Node child = nl.item(i);
 			if (child.getNodeType() == Node.ELEMENT_NODE

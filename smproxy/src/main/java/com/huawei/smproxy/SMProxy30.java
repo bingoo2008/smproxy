@@ -35,7 +35,7 @@ public class SMProxy30 {
 	 * @param args
 	 *            保存建立连接所需的参数。
 	 */
-	public SMProxy30(Map args) {
+	public SMProxy30(Map<String, Object> args) {
 		// 完成初始化和向ISMG登录等工作
 		this(new Args(args));
 	}

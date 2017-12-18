@@ -41,9 +41,9 @@ public class SGIPConnection extends SGIPSocketConnection {
 	private int src_nodeid;
 	private String ipaddr;
 	private int port;
-	private HashMap connmap;
+	private HashMap<String, SGIPConnection> connmap;
 
-	public SGIPConnection(Args args, boolean ifasClient, HashMap connmap) {
+	public SGIPConnection(Args args, boolean ifasClient, HashMap<String, SGIPConnection> connmap) {
 		hbnoResponseOut = args.get("heartbeat-noresponseout", 3);
 		source_addr = args.get("source-addr", "huawei");
 		version = args.get("version", 1);

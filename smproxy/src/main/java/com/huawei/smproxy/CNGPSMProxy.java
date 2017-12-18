@@ -23,7 +23,7 @@ public class CNGPSMProxy {
 	 * @param args
 	 *            保存建立连接所需的参数。
 	 */
-	public CNGPSMProxy(Map args) {
+	public CNGPSMProxy(Map<String, Object> args) {
 		this(new Args(args));
 	}
 

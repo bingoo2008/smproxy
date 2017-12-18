@@ -34,7 +34,7 @@ public class Resource {
 	 * @param url
 	 *            相对URL。
 	 */
-	public Resource(Class c, String url) throws IOException {
+	public Resource(Class<?> c, String url) throws IOException {
 
 		String className = c.getName();
 

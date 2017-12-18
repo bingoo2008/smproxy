@@ -1,7 +1,8 @@
 package com.huawei.insa2.comm;
 
-import java.util.HashMap;
 import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 协议层自动机的状态事件。包括：创建、删除、收到消息、发送响应、创建子协议层自动机。
@@ -33,14 +34,14 @@ public class PEvent {
 	public static final int MESSAGE_DISPATCH_FAIL = 64;
 
 	/** 事件值和名称的对应表。 */
-	static final HashMap names = new HashMap();
+	static final Map<Object, String> NAMES = new HashMap<Object, String>();
 	static {
 		try {
 			Field[] f = PEvent.class.getFields();
 			for (int i = 0; i < f.length; i++) {
 				String name = f[i].getName();
 				Object id = f[i].get(null);
-				names.put(id, name);
+				NAMES.put(id, name);
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -105,6 +106,6 @@ public class PEvent {
 	 * @return 字符串描述。
 	 */
 	public String toString() {
-		return "PEvent:source=" + source + ",type=" + names.get(new Integer(type)) + ",data=" + data;
+		return "PEvent:source=" + source + ",type=" + NAMES.get(new Integer(type)) + ",data=" + data;
 	}
 }

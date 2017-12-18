@@ -214,7 +214,7 @@ public class Debug {
 	 *            要输出的对象。
 	 */
 	public static final void dump(Object obj) {
-		dump(dumpHead(), 3, new Vector(), obj);
+		dump(dumpHead(), 3, new Vector<Integer>(), obj);
 	}
 
 	/**
@@ -226,7 +226,7 @@ public class Debug {
 	 *            输出信息的前缀。
 	 */
 	public static final void dump(Object obj, String prefix) {
-		dump(prefix + dumpHead(), 3, new Vector(), obj);
+		dump(prefix + dumpHead(), 3, new Vector<Integer>(), obj);
 	}
 
 	/**
@@ -238,7 +238,7 @@ public class Debug {
 	 *            递归深度。
 	 */
 	public static final void dump(Object obj, int depth) {
-		dump(dumpHead(), depth, new Vector(), obj);
+		dump(dumpHead(), depth, new Vector<Integer>(), obj);
 	}
 
 	// ------------------------ 以下是私有方法，不对外开放 -----------------------
@@ -254,7 +254,7 @@ public class Debug {
 	 *            输出的向量。
 	 */
 	private static final void dump(String prefix, int depth,
-			Vector checkCircuit, Vector v) {
+			Vector<Integer> checkCircuit, Vector<Integer> v) {
 		if (v == null) {
 			dump(prefix, "null");
 			return;
@@ -283,14 +283,15 @@ public class Debug {
 	 * @param request
 	 *            要输出的请求。
 	 */
-	private static final void dumpServletRequest(String prefix, Object request) {
+	@SuppressWarnings("rawtypes")
+    private static final void dumpServletRequest(String prefix, Object request) {
 		try {
 			if (request == null) {
 				dump(prefix, "null");
 				return;
 			}
-			dumpBegin(prefix, new Vector(), request);
-			Class c = request.getClass();
+			dumpBegin(prefix, new Vector<Integer>(), request);
+			Class<?> c = request.getClass();
 			Method m1 = null;
 			m1 = c.getMethod("getParameterNames", new Class[] {});
 
@@ -310,7 +311,7 @@ public class Debug {
 				}
 				dump(indent(prefix), name + " = " + sb);
 			}
-			dumpEnd(prefix, new Vector(), request);
+			dumpEnd(prefix, new Vector<Integer>(), request);
 		} catch (Exception ex) {
 			ex.printStackTrace(out);
 		}
@@ -327,7 +328,7 @@ public class Debug {
 	 *            输出的枚举对象。
 	 */
 	private static final void dump(String prefix, int depth,
-			Vector checkCircuit, Enumeration e) {
+			Vector<Integer> checkCircuit, Enumeration<Object> e) {
 		if (e == null) {
 			dump(prefix, "null");
 			return;
@@ -354,9 +355,9 @@ public class Debug {
 			dump(prefix, "null");
 			return;
 		}
-		dumpBegin(prefix, new Vector(), t);
+		dumpBegin(prefix, new Vector<Integer>(), t);
 		t.printStackTrace(out);
-		dumpEnd(prefix, new Vector(), t);
+		dumpEnd(prefix, new Vector<Integer>(), t);
 	}
 
 	/**
@@ -382,7 +383,7 @@ public class Debug {
 					+ " offset=" + offset + " length=" + length);
 			return;
 		}
-		dumpBegin(prefix, new Vector(), data);
+		dumpBegin(prefix, new Vector<Integer>(), data);
 		int end = offset + length;
 		dump(indent(prefix),
 				"[HEX]  0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f | 0123456789abcdef");
@@ -415,7 +416,7 @@ public class Debug {
 			}
 			dump(indent(prefix), new String(row));
 		}
-		dumpEnd(prefix, new Vector(), data);
+		dumpEnd(prefix, new Vector<Integer>(), data);
 	}
 
 	/**
@@ -441,12 +442,12 @@ public class Debug {
 	 *            输出的Map对象。
 	 */
 	private static final void dump(String prefix, int depth,
-			Vector checkCircuit, Map map) {
+			Vector<Integer> checkCircuit, Map<Object, Object> map) {
 		if (map == null) {
 			dump(prefix, "null");
 		}
 		dumpBegin(prefix, checkCircuit, map);
-		for (Iterator i = map.keySet().iterator(); i.hasNext();) {
+		for (Iterator<Object> i = map.keySet().iterator(); i.hasNext();) {
 			Object key = i.next();
 			Object value = map.get(key);
 			if (value instanceof String) {
@@ -483,7 +484,7 @@ public class Debug {
 	 *            输出的对象数组。
 	 */
 	private static final void dump(String prefix, int depth,
-			Vector checkCircuit, Object[] objs) {
+			Vector<Integer> checkCircuit, Object[] objs) {
 		if (objs == null) {
 			dump(prefix, "null");
 			return;
@@ -507,7 +508,8 @@ public class Debug {
 	 * @param obj需要dump的对象
 	 *            。
 	 */
-	private static void dump(String prefix, int depth, Vector checkCircuit,
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+    private static void dump(String prefix, int depth, Vector<Integer> checkCircuit,
 			Object obj) {
 		if (obj == null) {
 			dump(prefix, "null");
@@ -587,7 +589,7 @@ public class Debug {
 
 		// 其他对象
 		dumpBegin(prefix, checkCircuit, obj);
-		Class c = obj.getClass();
+		Class<?> c = obj.getClass();
 		Field[] f;
 		while (c != null) {
 			try {
@@ -629,7 +631,7 @@ public class Debug {
 					}
 				} catch (Exception ex) {
 				}
-				Class ct = f[i].getType(); // 变量类型
+				Class<?> ct = f[i].getType(); // 变量类型
 				String t = formatClassName(ct, v);// 变量类型名称
 				dump(indent(prefix) + (m + ' ' + t + ' ' + n).trim() + " = ",
 						depth, checkCircuit, v);
@@ -647,7 +649,7 @@ public class Debug {
 	 * @param dump的对象
 	 *            。
 	 */
-	private static void dumpBegin(String prefix, Vector checkCircuit, Object obj) {
+	private static void dumpBegin(String prefix, Vector<Integer> checkCircuit, Object obj) {
 		String className = formatClassName(obj.getClass(), obj);
 		int address = System.identityHashCode(obj);
 		checkCircuit.addElement(new Integer(address));
@@ -671,7 +673,7 @@ public class Debug {
 	 * @param prefix
 	 *            输出前缀。
 	 */
-	private static void dumpEnd(String prefix, Vector checkCircuit, Object obj) {
+	private static void dumpEnd(String prefix, Vector<Integer> checkCircuit, Object obj) {
 		checkCircuit.removeElement(new Integer(System.identityHashCode(obj)));
 		int p = prefix.lastIndexOf(indentString);
 		if (p > 0) {
@@ -780,7 +782,7 @@ public class Debug {
 	 *            要格式化的类。
 	 * @return 格式化后的类名。
 	 */
-	private static String formatClassName(Class c, Object obj) {
+	private static String formatClassName(Class<?> c, Object obj) {
 		String t = c.getName();
 
 		// 去掉末尾分号

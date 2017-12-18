@@ -35,7 +35,7 @@ public class SMProxy {
 	 * @param args
 	 *            保存建立连接所需的参数。
 	 */
-	public SMProxy(Map args) {
+	public SMProxy(Map<String, Object> args) {
 		this(new Args(args));
 	}
 
