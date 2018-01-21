@@ -10,11 +10,10 @@ import java.io.IOException;
  */
 public abstract class PReader {
 
-	/**
-	 * 向编码器写入一个消息。
-	 * 
-	 * @param message
-	 *            待写入的消息。
-	 */
-	public abstract PMessage read() throws IOException;
+    /**
+     * 向编码器写入一个消息。
+     * 
+     * @param message 待写入的消息。
+     */
+    public abstract PMessage read() throws IOException;
 }

@@ -1,5 +1,8 @@
 package com.huawei.insa2.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * 对监视线程的抽象。封装一种特殊的线程行为：一旦被创建就永远循环地做某件事情，
  * 直到该线程被杀死。这是一个抽象类，从Thread类继承而来，不能直接实例化，其子类
@@ -10,9 +13,11 @@ package com.huawei.insa2.util;
  * @version 1.0
  */
 public abstract class WatchThread extends Thread {
+    
+    protected Logger logger = LoggerFactory.getLogger(getClass());
 
 	/** 该线程存活标志，kill()方法将该标志置为false。 */
-	private boolean alive = true;
+	private volatile boolean alive = true;
 
 	/** 当前线程状态信息。用于告知外界该线程正在做什么。 */
 	String state = "unknown";
@@ -42,18 +47,19 @@ public abstract class WatchThread extends Thread {
 	/**
 	 * 线程主体，循环运行task()方法，直到调用了kill()方法。
 	 */
+	@Override
 	public final void run() {
-
 		// 无论出现什么异常都不能使该线程终止！
 		while (alive) {
 			try {
 				// System.out.println("doTask()");
 				task();
 			} catch (Exception ex) {
-				System.out.println("Exception ex");
+			    logger.error("WatchThread execute task failed", ex);
 				ex.printStackTrace();
-			} catch (Throwable t) { // 出现严重错误，搞不好系统会死掉
-				System.out.println("Throwable t");
+			} catch (Throwable t) { 
+			    // 出现严重错误，搞不好系统会死掉
+				logger.error("WatchThread execute task failed", t);
 				t.printStackTrace();
 			}
 		}
@@ -65,8 +71,8 @@ public abstract class WatchThread extends Thread {
 	 * @param state
 	 *            新的状态信息。
 	 */
-	protected void setState(String newState) {
-		this.state = newState;
+	protected void setState(String state) {
+		this.state = state;
 	}
 
 	/**
@@ -81,5 +87,5 @@ public abstract class WatchThread extends Thread {
 	/**
 	 * 子类必须覆盖的抽象方法，需要循环做的事情。
 	 */
-	abstract protected void task();
+	protected abstract void task();
 }

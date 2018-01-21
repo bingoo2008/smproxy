@@ -8,11 +8,10 @@ package com.huawei.insa2.comm;
  */
 public interface PEventListener {
 
-	/**
-	 * 协议层上发生的事件的监听者。
-	 * 
-	 * @param e
-	 *            协议事件。
-	 */
-	public abstract void handle(PEvent e);
+    /**
+     * 协议层上发生的事件的监听者。
+     * 
+     * @param e 协议事件。
+     */
+    public abstract void handle(PEvent e);
 }

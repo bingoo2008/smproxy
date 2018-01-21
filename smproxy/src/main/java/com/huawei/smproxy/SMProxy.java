@@ -8,6 +8,9 @@ package com.huawei.smproxy;
 import java.io.IOException;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.huawei.insa2.comm.PException;
 import com.huawei.insa2.comm.cmpp.CMPPConnection;
 import com.huawei.insa2.comm.cmpp.CMPPTransaction;
@@ -23,6 +26,8 @@ import com.huawei.insa2.util.Args;
  * 对外提供的API接口。
  */
 public class SMProxy {
+	
+	private Logger logger = LoggerFactory.getLogger(getClass());
 
 	/**
 	 * 收发消息使用的连接对象。
@@ -65,12 +70,23 @@ public class SMProxy {
 	public CMPPMessage send(CMPPMessage message) throws IOException {
 		if (message == null)// 消息为空，不发送
 			return null;
+		
+		long l1 = System.currentTimeMillis();
 		// 建立一事务
 		CMPPTransaction t = (CMPPTransaction) conn.createChild();
+		long l2 = System.currentTimeMillis();
+		logger.info("%%%%%%%%%%%%%% l2 - l1 = " + (l2 - l1));
 		try {
+			
 			t.send(message);
+			long l3 = System.currentTimeMillis();
+			logger.info("%%%%%%%%%%%%%% l3 - l2 = " + (l3 - l2));
 			t.waitResponse();
+			long l4 = System.currentTimeMillis();
+			logger.info("%%%%%%%%%%%%%% l4 - l3 = " + (l4 - l3));
 			CMPPMessage rsp = t.getResponse();
+			long l5 = System.currentTimeMillis();
+			logger.info("%%%%%%%%%%%%%% l5 - l4 = " + (l5 - l4));
 			CMPPMessage cmppmessage = rsp;
 			return cmppmessage;
 		} finally {

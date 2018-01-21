@@ -4,6 +4,7 @@ package com.huawei.insa2.comm;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 // import com.huawei.insa2.util.*;
 
@@ -16,48 +17,56 @@ import java.util.List;
 public abstract class PLayer {
 
     /** 最大自动机号。 */
-    public static final int          maxId = 1000000000; // 1G足够大了
+    public static final int       MAX_ID      = 1000000000;         // 1G足够大了
 
     /** 自动机号。 */
-    protected int                    id;
+//    protected final AtomicInteger id          = new AtomicInteger(0);
+    protected int id;
 
     /** 下一个子协议层自动机号。只使用有限正整数。 */
-    protected int                    nextChildId;
+//    protected final AtomicInteger nextChildId = new AtomicInteger(0);
+    protected int nextChildId;
 
     /** 父协议层。若是最低层则该成员为null。 */
-    protected PLayer                 parent;
+    protected PLayer              parent;
 
     /** 子协议层。在第一次往里面添加时才创建，防止无子协议层的自动机浪费内存。 */
-    private HashMap<Integer, PLayer> children;
+    private Map<Integer, PLayer>  children;
 
     /** 对消息触发的新建子协议层自动机行为的一组监听器。保存PListener的列表。 */
-    private List<PEventListener>     listeners;
+    private List<PEventListener>  listeners;
     
+    /**
+     * 内部锁
+     */
     private final Object lock = new Object();
-
+    
     /**
      * 创建一个协议层自动机。如果父协议层非空，则创建同时把自己注册到父协议层的子列表中。
      * 
      * @param theParent 父协议层，如果是最底层则传入null。
      */
     protected PLayer(PLayer theParent) {
-        if (theParent != null) { // 父协议层存在
-            
-            synchronized (lock) {
+        // 父协议层存在
+        if (theParent != null) {
+
+            synchronized (theParent) {
                 id = ++theParent.nextChildId;
-                if (theParent.nextChildId >= maxId) {
+                if (theParent.nextChildId >= MAX_ID) {
                     theParent.nextChildId = 0;
                 }
             }
-          
-            if (theParent.children == null) { // 子协议层列表尚未创建
+
+            // 子协议层列表尚未创建
+            if (theParent.children == null) {
                 theParent.children = new HashMap<Integer, PLayer>();
             }
+            
             theParent.children.put(new Integer(id), this);
             parent = theParent;
         }
     }
-    
+
     /**
      * 将消息向下传递给父协议层。
      * 
@@ -80,7 +89,7 @@ public abstract class PLayer {
             child.onReceive(message);
             fireEvent(new PEvent(PEvent.CHILD_CREATED, this, child));
         } else { // 从当前子协议自动机中找
-            child = (PLayer) children.get(new Integer(getChildId(message)));
+            child = children.get(new Integer(getChildId(message)));
             if (child == null) { // 找不到消息对应的自动机
                 fireEvent(new PEvent(PEvent.MESSAGE_DISPATCH_FAIL, this, message));
                 // Log.error(Resource.get("comm/dispatch-message-fail"));
@@ -151,7 +160,9 @@ public abstract class PLayer {
      */
     public void addEventListener(PEventListener l) {
         if (listeners == null) {
-            listeners = new ArrayList<PEventListener>();
+            synchronized (lock) {
+                listeners = new ArrayList<PEventListener>();
+            }
         }
         listeners.add(l);
     }
@@ -162,7 +173,9 @@ public abstract class PLayer {
      * @param l 待删除的事件监听器。
      */
     public void removeEventListener(PEventListener l) {
-        listeners.remove(l);
+        synchronized (lock) {
+            listeners.remove(l);
+        }
     }
 
     /**
